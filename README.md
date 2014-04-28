@@ -1,0 +1,4 @@
+POW
+===
+
+Script for greasemonkey. 
