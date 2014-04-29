@@ -1,4 +1,4 @@
 POW
 ===
 
-Script for Greasemonkey plugin.
+Script for Greasemonkey plugin. Etc.
