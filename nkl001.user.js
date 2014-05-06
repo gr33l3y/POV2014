@@ -3,7 +3,7 @@
 // @namespace   NKL001
 // @include     http://www.nakluky.cz/* 
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
-// @version     1
+// @version     2
 // @grant       none
 // ==/UserScript==
 
@@ -204,12 +204,13 @@ var RequestBox = function()
     {
        $.ajax({
           type: 'GET',
+          dataType: 'json',
           url: href,
           async: false,
-          success: function(data){
-             FX.dataParser.setHTMLContent(data);
+          success: function(data){           
+             FX.dataParser.setHTMLContent(data.str);
              FX.dataParser.parseOnline2();  
-             rB.consumeBytes(data.length); 
+             //rB.consumeBytes(data.length); 
           }
       });        
     };
@@ -323,8 +324,9 @@ var WidgetRenderer = function()
     wR = {};   
     wR.placeStyle = function(){
         $('head').html(CUSTOM_CSS);
-        $('#body_id').attr('style','background:black;color:white');
-        $('#body_id').attr('onload','');
+        $('body').attr('style','background:black;color:white');
+        $('body').attr('onload','');
+        $('body').attr('id','body_id');
     };    
     wR.renderMainBar = function()
     {
@@ -347,7 +349,7 @@ var WidgetRenderer = function()
        wR.panelContent(FX.panelSwitcher.PANEL_PROFILE_DETAIL_ID,$('<div id="profile_detail"></div>'),true); 
        wR.panelContent(FX.panelSwitcher.PANEL_PROFILE_GALLERY_ID,$('<div id="profile_detail" class="warn">Not implemented yet -_-</div>'),true);                
        wR.panelContent(FX.panelSwitcher.PANEL_SETTINGS_ID,wR.settings($('<form id="settings"><form>')),true);                       
-       FX.pageControls.loginForm($('<input id="odeslat" type="submit" value="Send"></input>')).appendTo('#prihlasit');
+       FX.pageControls.loginForm($('<input id="odeslat" type="submit" value="Send"></input>')).appendTo('#prihlasit');  
        FX.pageControls.logout($('#act_logout'));       
        FX.pageControls.loadNextOnline($('#act_more')); 
        FX.pageControls.settings($('#act_settings')); 
@@ -358,12 +360,12 @@ var WidgetRenderer = function()
        FX.pageControls.apply($('#settings_apply')); 
        FX.pageControls.messageList($('#act_messages'));  
        if(FX.pageState.isLoggedIn)
-       {
+       {  
           FX.contentOverrider.login();           
        } 
        else
-       {
-          FX.contentOverrider.logout(); 
+       {   
+          FX.contentOverrider.logout();
        }        
     };
     wR.panelTab = function(params)
@@ -703,12 +705,11 @@ var ContentOverrider = function()
     };
     cO.init = function()
     {
-        FX.pageState.update();        
-        cO.removeStuff();
+        FX.pageState.update();
+        cO.removeStuff(); 
         FX.widgetRenderer.placeStyle();       
-        FX.widgetRenderer.renderMainBar();                   
-        FX.widgetRenderer.renderBody();      
-        
+        FX.widgetRenderer.renderMainBar();            
+        FX.widgetRenderer.renderBody(); 
         FX.requestBox.setAutomate(FX.pageState.loggedInCheckInterval);
         if(FX.pageState.isLoggedIn)
         {
@@ -771,7 +772,7 @@ var PageState = function()
     pS.maxNumOfPages = 5;
     pS.getOnlineThumbsUrl=function()
     {
-       return 'http://www.nakluky.cz/online/?page='+pS.currentPage + '&filtr=0&save=&typ=0&okres='+ pS.FilterCriterium.RegionId+'&vek_od='+pS.FilterCriterium.AgeFrom+'&vek_do='+ pS.FilterCriterium.AgeTo + '&vyska_od='+pS.FilterCriterium.HeightFrom+'&vyska_do='+pS.FilterCriterium.HeightTo+'&vaha_od='+pS.FilterCriterium.WeightFrom +'&vaha_do='+pS.FilterCriterium.WeightTo +'&profilove_foto=' + pS.FilterCriterium.IsProfilePhoto;    
+       return 'http://www.nakluky.cz/index.php?u=/online/&hash=&page='+pS.currentPage + '&filtr=0&save=&typ=0&okres='+ pS.FilterCriterium.RegionId+'&vek_od='+pS.FilterCriterium.AgeFrom+'&vek_do='+ pS.FilterCriterium.AgeTo + '&vyska_od='+pS.FilterCriterium.HeightFrom+'&vyska_do='+pS.FilterCriterium.HeightTo+'&vaha_od='+pS.FilterCriterium.WeightFrom +'&vaha_do='+pS.FilterCriterium.WeightTo +'&profilove_foto=' + pS.FilterCriterium.IsProfilePhoto;    
     };
     pS.getLoginUrl = function()
     {
